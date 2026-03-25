@@ -97,6 +97,16 @@ python src/main.py func=split data=DGN
 python src/main.py func=render data=DGN
 ```
 
+### AnyScaleGrasp (Mingrui)
+
+The `raw_mesh` and `processed_mesh` are copied from BODex.
+
+The object scales are defined in `src/config/task/scene_cfg.yaml`
+```bash
+# Execute scene_cfg, stat, split, and render
+bash script/AnyScaleGrasp_DGN.sh
+```
+
 ## Citation
 If you found this repository useful, please consider to cite the following works:
 - Our paper: 
