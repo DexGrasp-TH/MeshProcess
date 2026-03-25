@@ -29,15 +29,23 @@ git submodule update --init --recursive --progress
 ```
 conda create -n meshproc python=3.10    
 conda activate meshproc
+
+conda install pytorch==2.2.2 pytorch-cuda=12.1 -c pytorch -c nvidia  -y
+pip install mkl==2024.0.0
+
 pip install mujoco==3.2.7
 pip install trimesh
 pip install hydra-core
 pip install lxml
+pip install imageio
 
 # For partial point cloud rendering
 pip install warp-lang
 pip install opencv-python
 pip install pyglet
+
+pip uninstall numpy
+pip install numpy==1.26.4
 ```
 
 3. Build the third-party package ACVD following their [installation guide](https://github.com/valette/ACVD/tree/master?tab=readme-ov-file#simple-compilation-howto-under-linux). To install the [VTK](https://www.vtk.org/) dependencies of ACVD,

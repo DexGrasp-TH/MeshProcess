@@ -5,7 +5,8 @@
   file_path: ${data.output_template}/mesh/simplified.obj
   xml_path: ${data.output_template}/urdf/coacd.xml
   urdf_path: ${data.output_template}/urdf/coacd.urdf
-  scale_lst: [0.06, 0.08, 0.10, 0.12]
+  # scale_lst: [0.06, 0.08, 0.10, 0.12]
+  scale_lst: [0.16, 0.20, 0.24, 0.28]
 
 1-export_tabletop_scene_cfg:
   input_path: ${data.output_template}/info/tabletop_pose.json
@@ -14,7 +15,8 @@
   file_path: ${data.output_template}/mesh/simplified.obj
   xml_path: ${data.output_template}/urdf/coacd.xml
   urdf_path: ${data.output_template}/urdf/coacd.urdf
-  scale_lst: [0.06, 0.08, 0.10, 0.12]
+  # scale_lst: [0.06, 0.08, 0.10, 0.12]
+  scale_lst: [0.16, 0.20, 0.24, 0.28]
   pose_cfg:
     repeat: 1
     t: [0.75, 0., 0]

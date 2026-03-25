@@ -1,0 +1,11 @@
+root: assets/object/DGN_2k
+
+input_template: ${data.root}/raw_mesh/**.obj
+
+output_template: ${data.root}/processed_data/**
+
+output_scenecfg_template: ${data.root}/scene_cfg/**
+
+output_vision_template: ${data.root}/vision_data/azure_kinect_dk/**
+
+output_split: ${data.root}/valid_split
