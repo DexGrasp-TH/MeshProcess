@@ -1,5 +1,8 @@
 import os
 import sys
+import time
+import fcntl
+from contextlib import contextmanager
 
 import pyglet
 
@@ -15,6 +18,17 @@ os.environ["DISPLAY"] = ":98"  # useless?
 import cv2
 
 from .rotation import np_normalize
+
+
+@contextmanager
+def gpu_render_lock(gpu_id):
+    lock_path = f"/tmp/meshprocess_render_gpu_{gpu_id}.lock"
+    with open(lock_path, "w") as lock_file:
+        fcntl.flock(lock_file.fileno(), fcntl.LOCK_EX)
+        try:
+            yield
+        finally:
+            fcntl.flock(lock_file.fileno(), fcntl.LOCK_UN)
 
 
 def camera_spherical(sample_num, radius=1.0):
@@ -138,6 +152,7 @@ class WarpRender:
             far_plane=z_far,
             vsync=False,
             headless=True,
+            device=device,
         )
 
         # setup intrinsics
@@ -208,7 +223,9 @@ class WarpRender:
         else:
             raise NotImplementedError
 
-        self.renderer.get_pixels(image, split_up_tiles=True, mode=mode)
+        success = self.renderer.get_pixels(image, split_up_tiles=True, mode=mode)
+        if not success:
+            raise RuntimeError(f"Failed to read {mode} pixels from OpenGL renderer")
 
         return wp.to_torch(image)
 
@@ -239,7 +256,8 @@ def batch_warp_render(configs, scene_cfg_path_lst, gpu_id):
     func_config = configs.func
     device = f"cuda:{gpu_id}"
     with wp.ScopedDevice(device):
-        renderer = WarpRender(device)
+        with gpu_render_lock(gpu_id):
+            renderer = WarpRender(device)
 
         output_folder = func_config.save_path.split("/**")[0]
         os.makedirs(output_folder, exist_ok=True)
@@ -281,16 +299,24 @@ def batch_warp_render(configs, scene_cfg_path_lst, gpu_id):
             camera_cfg["sample_num"] = batch
             camera_view_matrix = get_camera_matrix(camera_cfg)
 
-            view_matrix = renderer.render(obj_mesh, camera_view_matrix)
+            for retry_id in range(3):
+                try:
+                    with gpu_render_lock(gpu_id):
+                        view_matrix = renderer.render(obj_mesh, camera_view_matrix)
 
-            if func_config.save_rgb:
-                rgb_image = renderer.get_image(mode="rgb")
+                        if func_config.save_rgb:
+                            rgb_image = renderer.get_image(mode="rgb")
 
-            if func_config.save_depth or func_config.save_pc:
-                depth_image = renderer.get_image(mode="depth")
-                if func_config.save_pc:
-                    all_pc = renderer.depth_to_point_cloud(depth_image)
-                    mask = depth_image.reshape(batch, -1) < 5
+                        if func_config.save_depth or func_config.save_pc:
+                            depth_image = renderer.get_image(mode="depth")
+                            if func_config.save_pc:
+                                all_pc = renderer.depth_to_point_cloud(depth_image)
+                                mask = depth_image.reshape(batch, -1) < 5
+                    break
+                except RuntimeError:
+                    if retry_id == 2:
+                        raise
+                    time.sleep(0.1)
 
             # save informations
             for b in range(batch):

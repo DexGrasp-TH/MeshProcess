@@ -25,9 +25,10 @@ def func_render(cfg):
     # target_obj_id = "core_bottle_1a7ba1f4c892e2da30711cdbdbc73924"                                                                                                                                                           
     # selected_scene_lst = []
     # for scene_path in all_scene_lst:                                                                                                                                                                                                
-    #     if target_obj_id in scene_path:                                                                                                                                                                                           
+    #     if target_obj_id in scene_path and "tabletop_ur10e" in scene_path:                                                                                                                                                                                           
     #         selected_scene_lst.append(scene_path)
     # all_scene_lst = selected_scene_lst
+    # all_scene_lst = all_scene_lst[:1000]
 
     all_scene_num = len(all_scene_lst)
     scene_num_lst = np.array([all_scene_num // len(gpu_lst)] * len(gpu_lst))
@@ -43,14 +44,20 @@ def func_render(cfg):
     )
     logging.info("#" * 30)
 
+    # batch_warp_render(cfg, all_scene_lst, cfg.func.gpu_lst[0]) # DEBUG
+
     if cfg.debug_id is not None:
         batch_warp_render(cfg, [cfg.debug_id], cfg.func.gpu_lst[0])
     else:
+        # Rendering uses CUDA/OpenGL state in each worker. Using the default
+        # fork start method on Linux can inherit an invalid graphics context
+        # into child processes and corrupt rendered outputs.
+        mp_ctx = multiprocessing.get_context("spawn")
         p_list = []
         for i, gpu_id in enumerate(gpu_lst):
             start = (scene_num_lst[:i]).sum()
             end = (scene_num_lst[: (i + 1)]).sum()
-            p = multiprocessing.Process(
+            p = mp_ctx.Process(
                 target=batch_warp_render,
                 args=(cfg, all_scene_lst[start:end], gpu_id),
             )

@@ -1,5 +1,5 @@
 gpu_lst: [1,2,3]
-thread_per_gpu: 10
+thread_per_gpu: 1 # use 1 thread per GPU to avoid CUDA/OpenGL context corruption in multi-processing rendering
 
 max_point_num: 4096
 
