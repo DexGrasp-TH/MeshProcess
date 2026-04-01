@@ -20,7 +20,8 @@
   urdf_path: ${data.output_template}/urdf/coacd.urdf
   pose_cfg:
     repeat: 1
-    t: [0.75, 0., 0]
+    # t: [0.75, 0., 0]
+    t: [0, 0, 0]
     noise: [0.1, 0.1, 0]
 
   # scale_lst: [0.06, 0.08, 0.10, 0.12]

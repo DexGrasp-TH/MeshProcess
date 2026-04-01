@@ -38,6 +38,8 @@ pip install trimesh
 pip install hydra-core
 pip install lxml
 pip install imageio
+pip install tqdm
+pip install scipy
 
 # For partial point cloud rendering
 pip install warp-lang
@@ -49,7 +51,7 @@ pip install numpy==1.26.4
 ```
 
 3. Build the third-party package ACVD following their [installation guide](https://github.com/valette/ACVD/tree/master?tab=readme-ov-file#simple-compilation-howto-under-linux). To install the [VTK](https://www.vtk.org/) dependencies of ACVD,
-```
+```bash
 sudo apt-get update
 sudo apt install -y build-essential cmake git unzip qt5-default libqt5opengl5-dev libqt5x11extras5-dev libeigen3-dev libboost-all-dev libglew-dev libglvnd-dev
 
@@ -58,11 +60,20 @@ cd vtk
 git checkout v9.2.0     
 mkdir build
 cd build
+
+# If you have sudo permission
 cmake ..
 make -j12
 sudo make install
 export VTK_DIR=/usr/local/include/vtk-9.2
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
+# else
+cmake -DCMAKE_INSTALL_PREFIX=<your_path> ..
+make -j12
+make install
+export VTK_DIR=<your_path>/lib/cmake/vtk-9.2
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:<your_path>/lib
 ``` 
 
 4. Build our customized CoACD by following the [compiling instructions](https://github.com/JYChen18/CoACD?tab=readme-ov-file#3-compile). Please note that we do not support CoACD installed via `pip`. OpenVDB will be automatically included after compiling CoACD.
@@ -73,6 +84,9 @@ For a quick start, we provide example mesh data in the `assets/object/example_ob
 ```
 bash script/example.sh
 ```
+
+### Debug
+If you want to debug, you can specify an object id (string) in `src/config/base.yaml` and set the `quiet` in `src/config/task/bodex/official.yaml` to True to see the intermediate log.
 
 ### Running New Data
 1. **Downloading datasets**: Please see the [guides](https://github.com/JYChen18/MeshProcess/tree/main/src/dataset#dataset-download) for downloading and processing object assets from [DexGraspNet](https://pku-epic.github.io/DexGraspNet/) and [Objaverse](https://objaverse.allenai.org/objaverse-1.0). You can prepare your raw mesh data similarly.
@@ -103,44 +117,6 @@ The `raw_mesh` and `processed_mesh` are copied from BODex.
 
 The object scales are defined in `src/config/task/scene_cfg.yaml`
 ```bash
-# Execute scene_cfg, stat, split, and render
-bash script/AnyScaleGrasp_DGN.sh
-```
-
-## Citation
-If you found this repository useful, please consider to cite the following works:
-- Our paper: 
-```
-@article{chen2024bodex,
-title={BODex: Scalable and Efficient Robotic Dexterous Grasp Synthesis Using Bilevel Optimization},
-author={Chen, Jiayi and Ke, Yubin and Wang, He},
-journal={arXiv preprint arXiv:2412.16490},
-year={2024}
-}
-```
-- [CoACD](https://github.com/SarahWeiii/CoACD) for convex decomposition:
-```
-@article{wei2022coacd,
-  title={Approximate convex decomposition for 3d meshes with collision-aware concavity and tree search},
-  author={Wei, Xinyue and Liu, Minghua and Ling, Zhan and Su, Hao},
-  journal={ACM Transactions on Graphics (TOG)},
-  volume={41},
-  number={4},
-  pages={1--18},
-  year={2022},
-  publisher={ACM New York, NY, USA}
-}
-```
-- [ACVD](https://github.com/valette/ACVD) for mesh simplification:
-```
-@article{valette2008generic,
-  title={Generic remeshing of 3D triangular meshes with metric-dependent discrete Voronoi diagrams},
-  author={Valette, S{\'e}bastien and Chassery, Jean Marc and Prost, R{\'e}my},
-  journal={IEEE Transactions on Visualization and Computer Graphics},
-  volume={14},
-  number={2},
-  pages={369--381},
-  year={2008},
-  publisher={IEEE}
-}
+# Check the script to see what is enabled or disabled.
+bash script/AnyScaleGrasp_DGN.sh 96 # n_worker
 ```

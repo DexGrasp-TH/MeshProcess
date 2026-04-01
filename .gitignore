@@ -206,3 +206,4 @@ output.txt
 assets/
 MUJOCO_LOG.TXT
 debug*
+test/

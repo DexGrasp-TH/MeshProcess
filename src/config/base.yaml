@@ -5,7 +5,7 @@ n_worker: 12
 skip: False      
 
 # run only one object id for debug
-debug_id: 
+debug_id:
 
 defaults:
   - _self_

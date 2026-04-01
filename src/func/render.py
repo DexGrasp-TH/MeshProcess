@@ -20,6 +20,15 @@ def func_render(cfg):
     all_scene_lst = glob(
         os.path.join(cfg.data.output_scenecfg_template, "**.npy"), recursive=True
     )
+
+    # # Only for debugging
+    # target_obj_id = "core_bottle_1a7ba1f4c892e2da30711cdbdbc73924"                                                                                                                                                           
+    # selected_scene_lst = []
+    # for scene_path in all_scene_lst:                                                                                                                                                                                                
+    #     if target_obj_id in scene_path:                                                                                                                                                                                           
+    #         selected_scene_lst.append(scene_path)
+    # all_scene_lst = selected_scene_lst
+
     all_scene_num = len(all_scene_lst)
     scene_num_lst = np.array([all_scene_num // len(gpu_lst)] * len(gpu_lst))
     scene_num_lst[: (all_scene_num % len(gpu_lst))] += 1
