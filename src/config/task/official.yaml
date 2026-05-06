@@ -1,65 +1,66 @@
 # Processing mesh
 # NOTE: prefix 1- and 2- is used for avoiding duplicated task names
-1-mesh_change_format:
-  input_path: ${data.input_template}
-  output_path: ${data.output_template}/mesh/raw.obj  
-  keep_material: True
 
-1-mesh_normalize:
-  input_path: ${data.output_template}/mesh/raw.obj
-  output_path: ${data.output_template}/mesh/normalized.obj
-  delete_input: True
+# 1-mesh_change_format:
+#   input_path: ${data.input_template}
+#   output_path: ${data.output_template}/mesh/raw.obj  
+#   keep_material: True
 
-1-mesh_convex_decomp:
-  input_path: ${data.output_template}/mesh/normalized.obj
-  output_path: ${data.output_template}/mesh/coacd.obj
-  part_output_folder_path: ${data.output_template}/urdf/meshes
-  part_output_filename: convex_piece
-  quiet: True
-  additional_args: -mv 1e-10
+# 1-mesh_normalize:
+#   input_path: ${data.output_template}/mesh/raw.obj
+#   output_path: ${data.output_template}/mesh/normalized.obj
+#   delete_input: True
 
-1-export_urdf: 
-  input_path: ${data.output_template}/urdf/meshes
-  output_path: ${data.output_template}/urdf/coacd.urdf
+# 1-mesh_convex_decomp:
+#   input_path: ${data.output_template}/mesh/normalized.obj
+#   output_path: ${data.output_template}/mesh/coacd.obj
+#   part_output_folder_path: ${data.output_template}/urdf/meshes
+#   part_output_filename: convex_piece
+#   quiet: True
+#   additional_args: -mv 1e-10
 
-1-export_mjcf: 
-  input_path: ${data.output_template}/urdf/meshes
-  output_path: ${data.output_template}/urdf/coacd.xml
+# 1-export_urdf: 
+#   input_path: ${data.output_template}/urdf/meshes
+#   output_path: ${data.output_template}/urdf/coacd.urdf
 
-1-mesh_manifold:
-  input_path: ${data.output_template}/mesh/coacd.obj
-  output_path: ${data.output_template}/mesh/manifold.obj
-  level_set: 0.1
-  quiet: True
-  delete_input: True
+# 1-export_mjcf: 
+#   input_path: ${data.output_template}/urdf/meshes
+#   output_path: ${data.output_template}/urdf/coacd.xml
 
-1-mesh_simplify:
-  input_path: ${data.output_template}/mesh/manifold.obj
-  output_path: ${data.output_template}/mesh/simplified.ply  # NOTE: this must be a ply
-  vert_num: 2000
-  gradation: 1.5    # This is recommanded in official repo
-  delete_input: True
-  quiet: True
+# 1-mesh_manifold:
+#   input_path: ${data.output_template}/mesh/coacd.obj
+#   output_path: ${data.output_template}/mesh/manifold.obj
+#   level_set: 0.1
+#   quiet: True
+#   delete_input: True
 
-2-mesh_change_format: 
-  input_path: ${data.output_template}/mesh/simplified.ply
-  output_path: ${data.output_template}/mesh/simplified.obj  
-  keep_material: False
-  delete_input: True
+# 1-mesh_simplify:
+#   input_path: ${data.output_template}/mesh/manifold.obj
+#   output_path: ${data.output_template}/mesh/simplified.ply  # NOTE: this must be a ply
+#   vert_num: 2000
+#   gradation: 1.5    # This is recommanded in official repo
+#   delete_input: True
+#   quiet: True
 
-# Processing info
-1-get_tabletop_pose:
-  input_path: ${data.output_template}/urdf/coacd.xml
-  output_path: ${data.output_template}/info/tabletop_pose.json
-  # debug_vis_path: ${data.output_template}/info/debug/pose.gif # Very slow!
-  max_try_num: 20    # 20 is already large enough for non-duplicated poses
-  remove_duplicated: True
+# 2-mesh_change_format: 
+#   input_path: ${data.output_template}/mesh/simplified.ply
+#   output_path: ${data.output_template}/mesh/simplified.obj  
+#   keep_material: False
+#   delete_input: True
 
-1-get_basic_info:
-  input_path: ${data.output_template}/mesh/simplified.obj
-  output_path: ${data.output_template}/info/simplified.json
+# # Processing info
+# 1-get_tabletop_pose:
+#   input_path: ${data.output_template}/urdf/coacd.xml
+#   output_path: ${data.output_template}/info/tabletop_pose.json
+#   # debug_vis_path: ${data.output_template}/info/debug/pose.gif # Very slow!
+#   max_try_num: 20    # 20 is already large enough for non-duplicated poses
+#   remove_duplicated: True
 
-# 1-get_complete_pc: 
+# 1-get_basic_info:
 #   input_path: ${data.output_template}/mesh/simplified.obj
-#   output_path: ${data.output_template}/complete_point_cloud.npy
-#   point_num: 4096
+#   output_path: ${data.output_template}/info/simplified.json
+
+1-get_complete_pc: 
+  input_path: ${data.output_template}/mesh/simplified.obj
+  output_path: ${data.output_template}/complete_point_cloud.npy
+  point_num: 4096
