@@ -119,4 +119,6 @@ The object scales are defined in `src/config/task/scene_cfg.yaml`
 ```bash
 # Check the script to see what is enabled or disabled.
 bash script/AnyScaleGrasp_DGN.sh 96 # n_worker
+
+bash script/AnyScaleGrasp_DGN_5k.sh 48 # n_worker
 ```
