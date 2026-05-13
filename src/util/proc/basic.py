@@ -1,5 +1,6 @@
 import sys
 import os
+import math
 import trimesh
 import numpy as np
 import lxml.etree as et
@@ -134,7 +135,7 @@ def export_tabletop_scene_cfg(config):
     pose_lst = load_json(input_path)
 
     for scale in scale_lst:
-        scale_name = f"scale{str(int(scale*100)).zfill(3)}"
+        scale_name = f"scale{str(math.floor(scale * 100 + 0.5)).zfill(3)}"
         for i, pose in enumerate(pose_lst):
             pose_name = f"pose{str(i).zfill(3)}"
             for j in range(pose_cfg["repeat"]):
@@ -208,7 +209,7 @@ def export_floating_scene_cfg(config):
     )
 
     for scale in scale_lst:
-        save_path = os.path.join(output_path, f"scale{str(int(scale*100)).zfill(3)}")
+        save_path = os.path.join(output_path, f"scale{str(math.floor(scale * 100 + 0.5)).zfill(3)}")
         scene_cfg = {
             "scene": {
                 obj_id: {
