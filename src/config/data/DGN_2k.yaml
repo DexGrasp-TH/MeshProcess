@@ -6,6 +6,7 @@ output_template: ${data.root}/processed_data/**
 
 output_scenecfg_template: ${data.root}/scene_cfg/**
 
-output_vision_template: ${data.root}/vision_data/azure_kinect_dk/**
+# output_vision_template: ${data.root}/vision_data/azure_kinect_dk/**
+output_vision_template: ${data.root}/vision_data/three_realsense_d435_random4096/**
 
 output_split: ${data.root}/valid_split
