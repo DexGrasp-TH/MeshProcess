@@ -45,6 +45,14 @@ pip install scipy
 pip install warp-lang
 pip install opencv-python
 pip install pyglet
+pip install viser
+
+# Optional CUDA-accelerated FPS for fused point-cloud generation.
+# This local package is built for Python 3.10, PyTorch 2.2.2, and CUDA 12.1.
+conda install -y ../AnyScaleDexLearn/pytorch3d-0.7.8-py310_cu121_pyt222.tar.bz2
+
+# Verify PyTorch3D FPS. The CUDA check requires GPU-visible execution.
+python -c "import torch, pytorch3d; from pytorch3d.ops import sample_farthest_points; pts=torch.rand(1,65536,3,device='cuda'); sampled, idx=sample_farthest_points(pts,K=4096,random_start_point=True); print(pytorch3d.__version__, sampled.shape, idx.shape, sampled.device)"
 
 pip uninstall numpy
 pip install numpy==1.26.4
@@ -118,7 +126,7 @@ The `raw_mesh` and `processed_mesh` are copied from BODex.
 The object scales are defined in `src/config/task/scene_cfg.yaml`
 ```bash
 # Check the script to see what is enabled or disabled.
-bash script/AnyScaleGrasp_DGN.sh 96 # n_worker
+GPU_LST='[0,1,2,3]' bash script/AnyScaleGrasp_DGN_2k.sh 48 # n_worker
 
 bash script/AnyScaleGrasp_DGN_5k.sh 48 # n_worker
 ```

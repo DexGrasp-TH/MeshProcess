@@ -3,10 +3,10 @@ thread_per_gpu: 1 # use 1 thread per GPU to avoid CUDA/OpenGL context corruption
 
 max_point_num: 4096
 pc_per_scene: 4
-views_per_pc: 1 # use one RealSense view for each partial point-cloud sample
-fused_render_strategy: all_at_once # render the four one-view samples in one tiled pass
+views_per_pc: 3
+fused_render_strategy: all_at_once # per_pc renders 3 views four times; all_at_once renders all 12 views in one tiled pass
 
-save_path: ${data.root}/vision_data/single_realsense_d435_random4096/**
+save_path: ${data.output_vision_template}
 save_pc: True
 save_rgb: False
 save_depth: False
@@ -14,12 +14,12 @@ save_individual_views: False
 point_cloud_outputs:
   - name: random4096
     sample_method: random
-    save_path: ${data.root}/vision_data/single_realsense_d435_random4096/**
+    save_path: ${data.root}/vision_data/three_realsense_d435_random4096/**
   - name: fps4096
     enabled: False
     sample_method: fps
     fps_backend: pytorch3d
-    save_path: ${data.root}/vision_data/single_realsense_d435_fps4096/**
+    save_path: ${data.root}/vision_data/three_realsense_d435_fps4096/**
     fps_pre_sample_num: 65536
 
 renderer:
@@ -27,8 +27,8 @@ renderer:
   tile_height: 720
   z_near: 0.1
   z_far: 10.0
-  n_cols: 1
-  n_rows: 4
+  n_cols: 2
+  n_rows: 2
   camera_model:
     type: custom
     # Intel RealSense D435I color 1280x720 intrinsics for aligned depth to color.
